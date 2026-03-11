@@ -12,9 +12,7 @@ class Level:
         self.mediator =  EntityMediator()
         self.factory = EntityFactory(self.mediator)
 
-        self.factory.create_player('player', (WIN_WIDTH/2, WIN_HEIGHT/2))
-        # self.factory.create_enemy('anxiety', (100,100))
-        # self.factory.create_enemy('procrastination', (100,300))
+        self.factory.create_player('player', WIN_WIDTH/2, WIN_HEIGHT/2)
 
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
     def run(self):
@@ -23,22 +21,22 @@ class Level:
             clock.tick(60)
             self.window.fill('gray')
 
-            for entity in self.mediator.entities:
-                entity.draw(self.window)
-                entity.update()
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == EVENT_ENEMY:
                     choice = rd.choice(('anxiety', 'procrastination'))
-                    self.factory.create_enemy(choice, self.spawn_enemy())
+                    self.factory.create_enemy(choice, self.spawn_enemy()[0], self.spawn_enemy()[1])
+
+            for entity in self.mediator.entities:
+                entity.update()
+                entity.draw(self.window)
 
             pygame.display.flip()
 
     @staticmethod
-    def spawn_enemy() -> tuple[int, int]:
+    def spawn_enemy():
         side = rd.choice(('top', 'bottom', 'left', 'right'))
         if side == 'top':
             x = rd.randint(0, WIN_WIDTH)

@@ -2,10 +2,11 @@ from abc import ABC, abstractmethod
 
 
 class Entity(ABC):
-    def __init__(self, mediator, name, position: tuple):
+    def __init__(self, mediator, name, x, y):
         self.mediator = mediator
         self.name = name
-        self.position = position
+        self.x = x
+        self.y = y
         self.health = 0
 
     @abstractmethod

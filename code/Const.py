@@ -12,9 +12,9 @@ SPAWN_TIME = 5000
 
 ENTITY_SPEED = {
     'player': 1,
-    'anxiety': 2,
+    'anxiety': 1,
     'procrastination': 0.8,
-    'guilt': 3,
+    'guilt': 1.2,
     'thought': 0
 }
 
