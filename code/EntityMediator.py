@@ -1,4 +1,6 @@
-from code.Const import ENTITY_SPEED
+from code.Const import ENTITY_SPEED, WIN_WIDTH, WIN_HEIGHT
+from code.Player import Player
+
 
 class EntityMediator:
     def __init__(self):
@@ -13,15 +15,6 @@ class EntityMediator:
 
     def remove(self, entity):
         self.entities.remove(entity)
-
-    def handle_collision(self):
-        for ent1 in self.entities:
-            for ent2 in self.entities:
-                if ent1 != ent2:
-                    pass
-
-    def resolve_collision(self):
-        pass
 
     def get_player(self):
         if self.player:

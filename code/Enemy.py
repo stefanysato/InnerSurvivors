@@ -13,6 +13,8 @@ class Enemy(Entity):
         self.y = y
         self.type = 'enemy'
 
+        self.effect_applied = False
+
         self.position = Vector2(self.x, self.y)
 
         self.frames = []
@@ -76,5 +78,12 @@ class Enemy(Entity):
         self.frame_index += self.animation_speed
         if self.frame_index >= len(self.frames):
             self.frame_index = 0
+
+        if self.rect.colliderect(player.rect):
+            if self.name == 'anxiety':
+                player.health -= 0.1
+            if self.name == 'procrastination' and not self.effect_applied:
+                player.speed = max(0.2, player.speed - 0.05)
+                self.effect_applied = True
 
         self.rect.center = self.position

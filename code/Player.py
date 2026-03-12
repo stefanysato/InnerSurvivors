@@ -2,7 +2,7 @@ import pygame.draw
 from pygame import Vector2
 from pygame.draw import rect
 
-from code.Const import C_PLAYER, ENTITY_SPEED
+from code.Const import C_PLAYER, ENTITY_SPEED, WIN_WIDTH, WIN_HEIGHT
 from code.Entity import Entity
 
 class Player(Entity):
@@ -15,9 +15,10 @@ class Player(Entity):
         self.radius = 20
 
         self.health = 100
+        self.speed = ENTITY_SPEED[self.name]
 
         # skills
-        self.breathing = False
+        self.breathing = True
         self.breath_timer = 0
         self.breath_cooldown = 0
         self.facing_left = False
@@ -59,7 +60,7 @@ class Player(Entity):
 
         if self.breathing:
             pygame.draw.circle(
-                window,
+                self.image,
                 (150, 200, 255),
                 (self.x, self.y),
                 self.radius + 30,
@@ -72,17 +73,17 @@ class Player(Entity):
         moving = False
 
         if pressed_key[pygame.K_w]:
-            self.position.y -= ENTITY_SPEED[self.name]
+            self.position.y -= self.speed
             moving = True
         if pressed_key[pygame.K_a]:
-            self.position.x -= ENTITY_SPEED[self.name]
+            self.position.x -= self.speed
             moving = True
             self.facing_left = True
         if pressed_key[pygame.K_s]:
-            self.position.y += ENTITY_SPEED[self.name]
+            self.position.y += self.speed
             moving = True
         if pressed_key[pygame.K_d]:
-            self.position.x += ENTITY_SPEED[self.name]
+            self.position.x += self.speed
             moving = True
             self.facing_left = False
 
@@ -99,6 +100,12 @@ class Player(Entity):
             self.frame_index = 0
 
         self.rect.center = self.position
+
+        window_rect = pygame.Rect(0,0, WIN_WIDTH, WIN_HEIGHT)
+        self.rect.clamp_ip(window_rect)
+
+        # sincroniza posição
+        self.position = pygame.Vector2(self.rect.center)
 
     def activate_skills(self):
         pass

@@ -2,9 +2,10 @@ import random as rd
 import sys
 import pygame
 
-from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME
+from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, C_PLAYER
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
+
 
 class Level:
     def __init__(self, window):
@@ -32,6 +33,9 @@ class Level:
             for entity in self.mediator.entities:
                 entity.update()
                 entity.draw(self.window)
+                if entity.name == 'player':
+                    self.text_generator(16, f'Health: {entity.health:.1f}', C_PLAYER, (10, 20))
+                    self.text_generator(16, f'Speed: {entity.speed}', C_PLAYER, (10, 40))
 
             pygame.display.flip()
 
@@ -51,3 +55,9 @@ class Level:
             x = WIN_WIDTH + 50
             y = rd.randint(0, WIN_HEIGHT)
         return x,y
+
+    def text_generator(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
+        text_font = pygame.font.SysFont(name="Lucida Console", size=text_size)
+        text_surf = text_font.render(text, True, text_color).convert_alpha()
+        text_rect = text_surf.get_rect(left=text_pos[0], top=text_pos[1])
+        self.window.blit(source=text_surf, dest=text_rect)
