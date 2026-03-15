@@ -1,8 +1,8 @@
+import math
 import pygame.draw
-from pygame import Vector2
-from pygame.draw import rect
-
-from code.Const import C_PLAYER, ENTITY_SPEED, WIN_WIDTH, WIN_HEIGHT
+from code.BreathSkill import BreathSkill
+from code.CognitiveRestructureSkill import CognitiveRestructureSkill
+from code.Const import ENTITY_SPEED, WIN_WIDTH, WIN_HEIGHT
 from code.Entity import Entity
 
 class Player(Entity):
@@ -11,30 +11,36 @@ class Player(Entity):
         self.type = 'player'
         self.x = x
         self.y = y
-        self.position = Vector2(self.x, self.y)
-        self.radius = 20
+        self.position = self.x, self.y
 
-        self.health = 100
+        self.stability = 100
+        self.stamina = 100
+        self.max_stamina = 100
+        self.stamina_drain = 0.5
+        self.stamina_regen = 0.01
+
         self.speed = ENTITY_SPEED[self.name]
+        self.score = 0
 
         # skills
-        self.breathing = True
-        self.breath_timer = 0
-        self.breath_cooldown = 0
-        self.facing_left = False
+        self.breath = BreathSkill(self)
+        self.cognitive_restructure = CognitiveRestructureSkill(self)
 
+        self.facing_left = False
+        self.idle_image = pygame.image.load(f'./assets/player_idle.png').convert_alpha()
         self.walk_frames = []
-        self.idle_frames = []
+        self.skill_frames = []
+
         frame_w = 55
         frame_h = 78
 
-        sheet_idle = pygame.image.load(f'./assets/player_idle.png').convert_alpha()
         sheet_walk = pygame.image.load(f'./assets/player_walk.png').convert_alpha()
+        sheet_skill = pygame.image.load(f'./assets/player_skill.png').convert_alpha()
 
-        # idle
+        # skill
         for i in range(4):
-            frame = sheet_idle.subsurface((i * frame_w, 0, frame_w, frame_h))
-            self.idle_frames.append(frame)
+            frame = sheet_skill.subsurface((i * frame_w, 0, frame_w, frame_h))
+            self.skill_frames.append(frame)
 
         # walk
         for i in range(4):
@@ -45,27 +51,19 @@ class Player(Entity):
         self.frame_index = 0
         self.animation_speed = 0.08
 
-        self.image = self.idle_frames[0]
+        self.image = self.idle_image
         self.rect = self.image.get_rect(center=(self.x, self.y))
 
 
     def draw(self, window):
-        frames = self.walk_frames if self.state == 'walk' else self.idle_frames
-        image = frames[int(self.frame_index)]
-
         if self.facing_left:
-            image = pygame.transform.flip(image, True, False)
+            self.image = pygame.transform.flip(self.image, True, False)
 
-        window.blit(image, self.rect)
+        window.blit(self.image, self.rect)
 
-        if self.breathing:
-            pygame.draw.circle(
-                self.image,
-                (150, 200, 255),
-                (self.x, self.y),
-                self.radius + 30,
-                2
-            )
+        # draw skills
+        self.breath.draw(window)
+        self.cognitive_restructure.draw(window)
 
     def update(self):
         pressed_key = pygame.key.get_pressed()
@@ -86,17 +84,39 @@ class Player(Entity):
             self.position.x += self.speed
             moving = True
             self.facing_left = False
+        # if pressed_key[pygame.K_SPACE] and self.stamina > 0:
+        #     self.breath.activate()
+        # else:
+        #     self.breath.active = False
+        if pressed_key[pygame.K_c] and not self.cognitive_restructure.active:
+            self.cognitive_restructure.activate()
 
         if moving:
             self.state = 'walk'
+        elif self.breath.active:
+            self.state = 'skill'
+            self.mediator.push_enemies(self)
         else:
             self.state = 'idle'
 
-        self.frame_index += self.animation_speed
+        if self.state == "walk":
+            self.frame_index += self.animation_speed
 
-        frames = self.walk_frames if self.state == 'walk' else self.idle_frames
+            if self.frame_index >= len(self.walk_frames):
+                self.frame_index = 0
 
-        if self.frame_index >= len(frames):
+            self.image = self.walk_frames[int(self.frame_index)]
+
+        elif self.state == "skill":
+            self.frame_index += self.animation_speed
+
+            if self.frame_index >= len(self.skill_frames):
+                self.frame_index = 0
+
+            self.image = self.skill_frames[int(self.frame_index)]
+
+        else:
+            self.image = self.idle_image
             self.frame_index = 0
 
         self.rect.center = self.position
@@ -107,5 +127,5 @@ class Player(Entity):
         # sincroniza posição
         self.position = pygame.Vector2(self.rect.center)
 
-    def activate_skills(self):
-        pass
+        self.breath.update()
+        self.cognitive_restructure.update()

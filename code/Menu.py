@@ -10,14 +10,14 @@ class Menu:
         self.window = window
 
     def run(self):
-        self.text_generator(30, "press [space] to start", C_WHITE, (WIN_WIDTH/2, WIN_HEIGHT/2))
+        self.text_generator(30, "press [enter] to start", C_WHITE, (WIN_WIDTH/2, WIN_HEIGHT/2))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_RETURN:
                     level = Level(self.window)
                     level.run()
 

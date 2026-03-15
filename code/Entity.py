@@ -7,7 +7,7 @@ class Entity(ABC):
         self.name = name
         self.x = x
         self.y = y
-        self.health = 0
+        self.stability = 0
 
     @abstractmethod
     def update(self):

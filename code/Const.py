@@ -3,12 +3,12 @@ from pygame.constants import USEREVENT
 # C
 C_WHITE = (255, 255, 255)
 C_PLAYER = (0, 0, 0)
-C_ANXIETY = (255, 0, 0)
-C_PROC = (63, 72, 204)
+C_BREATH = (150, 200, 255)
+C_COGNIT = (255, 175, 200)
 
 # E
 EVENT_ENEMY = USEREVENT + 1
-SPAWN_TIME = 5000
+EVENT_TIMEOUT = USEREVENT + 2
 
 ENTITY_SPEED = {
     'player': 1,
@@ -17,6 +17,13 @@ ENTITY_SPEED = {
     'guilt': 1.2,
     'thought': 0
 }
+
+# S
+SPAWN_TIME = 5000
+
+# T
+TIMEOUT_STEP = 100 # 100ms
+TIMEOUT_LEVEL = 60000 # 1min
 
 # W
 WIN_WIDTH = 800

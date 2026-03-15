@@ -2,8 +2,8 @@ from code.Entity import Entity
 
 
 class NeutralThought(Entity):
-    def __init__(self, name, mediator):
-        super().__init__(self, name, mediator)
+    def __init__(self, name, mediator, x, y):
+        super().__init__(mediator, name, x, y)
         self.type = 'thought'
 
     def update(self):
