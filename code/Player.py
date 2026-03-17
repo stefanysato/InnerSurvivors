@@ -14,10 +14,10 @@ class Player(Entity):
         self.position = self.x, self.y
 
         self.stability = 100
-        self.stamina = 100
-        self.max_stamina = 100
-        self.stamina_drain = 0.5
-        self.stamina_regen = 0.01
+        # self.stamina = 100
+        # self.max_stamina = 100
+        # self.stamina_drain = 0.5
+        # self.stamina_regen = 0.01
 
         self.speed = ENTITY_SPEED[self.name]
         self.score = 0
@@ -49,7 +49,7 @@ class Player(Entity):
 
         self.state = 'idle'
         self.frame_index = 0
-        self.animation_speed = 0.08
+        self.animation_speed = 0.05
 
         self.image = self.idle_image
         self.rect = self.image.get_rect(center=(self.x, self.y))
@@ -88,14 +88,14 @@ class Player(Entity):
         #     self.breath.activate()
         # else:
         #     self.breath.active = False
-        if pressed_key[pygame.K_c] and not self.cognitive_restructure.active:
-            self.cognitive_restructure.activate()
 
         if moving:
             self.state = 'walk'
         elif self.breath.active:
             self.state = 'skill'
             self.mediator.push_enemies(self)
+        elif self.cognitive_restructure.active:
+            self.state = 'skill'
         else:
             self.state = 'idle'
 

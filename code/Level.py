@@ -16,14 +16,17 @@ class Level:
 
         self.factory.create_player('player', WIN_WIDTH/2, WIN_HEIGHT/2)
 
-        self.time_count = TIMEOUT_STEP
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
         pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP)
+
+        self.neutral_thoughts = 0
 
     def run(self):
         clock = pygame.time.Clock()
         while True:
             clock.tick(60)
+            time_counter = pygame.time.get_ticks()
+
             self.window.fill('gray')
 
             for event in pygame.event.get():
@@ -33,29 +36,23 @@ class Level:
                 if event.type == EVENT_ENEMY:
                     choice = rd.choice(('anxiety', 'procrastination'))
                     self.factory.create_enemy(choice, self.spawn_enemy()[0], self.spawn_enemy()[1])
-                if event.type == EVENT_TIMEOUT:
-                    self.time_count += TIMEOUT_STEP
-                    if self.time_count == TIMEOUT_LEVEL:
-                        for ent in self.mediator.entities:
-                            if ent.name == 'player':
-                                # ent.score += ?
-                                pass
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.mediator.player.breath.activate()
+                    if event.key == pygame.K_c:
+                        self.mediator.player.cognitive_restructure.activate()
 
-
+            if time_counter >= TIMEOUT_LEVEL:
+                print('você venceu!')
 
             for entity in self.mediator.entities:
                 entity.update()
                 entity.draw(self.window)
                 if entity.name == 'player':
                     self.text_generator(14, f'Estabilidade: {entity.stability:.0f}', C_PLAYER, (10,10))
-                    self.text_generator(14, f'Energia: {entity.stamina:.0f}', C_PLAYER, (10,30))
-                    self.text_generator(14, f'Velocidade: {entity.speed}', C_PLAYER, (10,50))
+                    self.text_generator(14, f'Velocidade: {entity.speed}', C_PLAYER, (10,30))
 
-
-            self.text_generator(14, f'Tempo decorrido: {self.time_count / 1000}', C_PLAYER, (WIN_WIDTH/2, 20))
+            self.text_generator(14, f'Tempo decorrido: {time_counter / 1000:.0f}', C_PLAYER, (WIN_WIDTH/2, 20))
 
             pygame.display.flip()
 

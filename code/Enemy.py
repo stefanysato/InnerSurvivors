@@ -5,6 +5,7 @@ from pygame import Vector2
 
 from code.Const import ENTITY_SPEED
 from code.Entity import Entity
+from code.NeutralThought import NeutralThought
 
 
 class Enemy(Entity):
@@ -99,10 +100,6 @@ class Enemy(Entity):
         # reduz knockback gradualmente
         self.knockback *= self.knockback_decay
 
-        # reestruturação cognitiva
-        if self.status['transform']:
-            # transform to neutral
-            pass
 
         self.frame_index += self.animation_speed
         if self.frame_index >= len(self.frames):

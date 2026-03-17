@@ -34,17 +34,7 @@ class EntityMediator:
         for enemy in self.enemies:
             distance = enemy.position.distance_to(self.player.position)
 
-            if distance < player.breath.radius:
+            if distance <= player.breath.radius:
                 enemy.status["repel"] = True
             else:
                 enemy.status["repel"] = False
-
-    def transform_to_neutral(self, enemy):
-        for enemy in self.enemies:
-            x = enemy.x
-            y = enemy.y
-
-            self.remove(enemy)
-
-            neutral = NeutralThought(x, y, self)
-            self.register(neutral)
