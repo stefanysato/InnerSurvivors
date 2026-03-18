@@ -32,23 +32,23 @@ class Enemy(Entity):
         # anxiety
         if self.name == 'anxiety':
             sheet = pygame.image.load(f'./assets/{self.name}.png')
-            frame_w = 33
-            frame_h = 61
+            frame_w = 50
+            frame_h = 50
 
             self.frames = []
 
-            for i in range(6):
+            for i in range(10):
                 frame = sheet.subsurface((i * frame_w, 0, frame_w, frame_h))
                 self.frames.append(frame)
 
         if self.name == 'procrastination':
             sheet = pygame.image.load(f'./assets/{self.name}.png')
-            frame_w = 58
-            frame_h = 30
+            frame_w = 42
+            frame_h = 37
 
             self.frames = []
 
-            for i in range(6):
+            for i in range(4):
                 frame = sheet.subsurface((i * frame_w, 0, frame_w, frame_h))
                 self.frames.append(frame)
 
@@ -72,9 +72,6 @@ class Enemy(Entity):
             case 'procrastination':
                 image = self.frames[int(self.frame_index)]
                 window.blit(image, self.rect)
-
-            case 'guilt':
-                pass
 
     def update(self):
         player = self.mediator.get_player()
@@ -100,6 +97,11 @@ class Enemy(Entity):
         # reduz knockback gradualmente
         self.knockback *= self.knockback_decay
 
+        # transform
+        if self.status["transform"]:
+            self.mediator.remove(self)
+            thought = NeutralThought("thought", self.mediator, self.position.x, self.position.y)
+            self.mediator.register(thought)
 
         self.frame_index += self.animation_speed
         if self.frame_index >= len(self.frames):

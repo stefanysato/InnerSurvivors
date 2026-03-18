@@ -84,10 +84,6 @@ class Player(Entity):
             self.position.x += self.speed
             moving = True
             self.facing_left = False
-        # if pressed_key[pygame.K_SPACE] and self.stamina > 0:
-        #     self.breath.activate()
-        # else:
-        #     self.breath.active = False
 
         if moving:
             self.state = 'walk'
@@ -96,6 +92,7 @@ class Player(Entity):
             self.mediator.push_enemies(self)
         elif self.cognitive_restructure.active:
             self.state = 'skill'
+            self.mediator.transform_to_neutral(self)
         else:
             self.state = 'idle'
 

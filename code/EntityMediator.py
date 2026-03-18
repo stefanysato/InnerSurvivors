@@ -38,3 +38,12 @@ class EntityMediator:
                 enemy.status["repel"] = True
             else:
                 enemy.status["repel"] = False
+
+    def transform_to_neutral(self, player):
+        for enemy in self.enemies:
+            distance = enemy.position.distance_to(self.player.position)
+
+            if distance <= player.cognitive_restructure.radius:
+                enemy.status["transform"] = True
+            else:
+                enemy.status["transform"] = False

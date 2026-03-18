@@ -51,8 +51,13 @@ class Level:
                 if entity.name == 'player':
                     self.text_generator(14, f'Estabilidade: {entity.stability:.0f}', C_PLAYER, (10,10))
                     self.text_generator(14, f'Velocidade: {entity.speed}', C_PLAYER, (10,30))
+                if entity.name == 'thought':
+                    pass
 
-            self.text_generator(14, f'Tempo decorrido: {time_counter / 1000:.0f}', C_PLAYER, (WIN_WIDTH/2, 20))
+            self.neutral_thoughts = len(self.mediator.thoughts)
+
+            self.text_generator(14, f'Tempo decorrido: {time_counter / 1000:.0f}', C_PLAYER, (WIN_WIDTH/2, 10))
+            self.text_generator(14, f'Pensamentos Neutros: {self.neutral_thoughts}', C_PLAYER, (WIN_WIDTH/2, 30))
 
             pygame.display.flip()
 
