@@ -6,6 +6,7 @@ from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, C_PLAYER,
     TIMEOUT_LEVEL
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
+from code.HUD import HUD
 
 
 class Level:
@@ -14,12 +15,14 @@ class Level:
         self.mediator =  EntityMediator()
         self.factory = EntityFactory(self.mediator)
 
-        self.factory.create_player('player', WIN_WIDTH/2, WIN_HEIGHT/2)
+        self.player = self.factory.create_player('player', WIN_WIDTH/2, WIN_HEIGHT/2)
 
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
         pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP)
 
         self.neutral_thoughts = 0
+
+        self.hud = HUD(self.player, window)
 
     def run(self):
         clock = pygame.time.Clock()
@@ -38,9 +41,9 @@ class Level:
                     self.factory.create_enemy(choice, self.spawn_enemy()[0], self.spawn_enemy()[1])
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
-                        self.mediator.player.breath.activate()
+                        self.mediator.player.skills[0].activate()
                     if event.key == pygame.K_c:
-                        self.mediator.player.cognitive_restructure.activate()
+                        self.mediator.player.skills[1].activate()
 
             if time_counter >= TIMEOUT_LEVEL:
                 print('você venceu!')
@@ -48,17 +51,13 @@ class Level:
             for entity in self.mediator.entities:
                 entity.update()
                 entity.draw(self.window)
-                if entity.name == 'player':
-                    self.text_generator(14, f'Estabilidade: {entity.stability:.0f}', C_PLAYER, (10,10))
-                    self.text_generator(14, f'Velocidade: {entity.speed}', C_PLAYER, (10,30))
-                if entity.name == 'thought':
-                    pass
 
             self.neutral_thoughts = len(self.mediator.thoughts)
 
-            self.text_generator(14, f'Tempo decorrido: {time_counter / 1000:.0f}', C_PLAYER, (WIN_WIDTH/2, 10))
-            self.text_generator(14, f'Pensamentos Neutros: {self.neutral_thoughts}', C_PLAYER, (WIN_WIDTH/2, 30))
+            self.text_generator(14, f'Tempo decorrido: {time_counter / 1000:.0f}', C_PLAYER, (WIN_WIDTH - 200, 10))
+            self.text_generator(14, f'Pensamentos Neutros: {self.neutral_thoughts}', C_PLAYER, (WIN_WIDTH - 200, 30))
 
+            self.hud.draw(self.window)
             pygame.display.flip()
 
     @staticmethod
@@ -79,7 +78,7 @@ class Level:
         return x,y
 
     def text_generator(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
-        text_font = pygame.font.SysFont(name="Lucida Console", size=text_size)
+        text_font = pygame.font.SysFont(name="Verdana", size=text_size)
         text_surf = text_font.render(text, True, text_color).convert_alpha()
         text_rect = text_surf.get_rect(left=text_pos[0], top=text_pos[1])
         self.window.blit(source=text_surf, dest=text_rect)

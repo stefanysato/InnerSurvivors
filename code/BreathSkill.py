@@ -5,12 +5,20 @@ from code.Skill import Skill
 
 
 class BreathSkill(Skill):
-    def __init__(self, player):
-        Skill.__init__(self, player)
+    def __init__(self, player, mediator):
+        Skill.__init__(self, player, mediator)
         self.radius = 60
         self.duration = 3000  # 3s
-        self.cooldown = 10000  # 10s
+        self.cooldown = 15000  # 10s
         self.end_time = -self.cooldown
+
+    def update(self):
+        super().update()
+
+        if not self.active:
+            return
+
+        self.mediator.push_enemies(self.player)
 
     def draw(self, window):
         if not self.active:

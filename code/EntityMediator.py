@@ -1,5 +1,3 @@
-from code.NeutralThought import NeutralThought
-
 
 class EntityMediator:
     def __init__(self):
@@ -34,7 +32,7 @@ class EntityMediator:
         for enemy in self.enemies:
             distance = enemy.position.distance_to(self.player.position)
 
-            if distance <= player.breath.radius:
+            if distance <= player.skills[0].radius:
                 enemy.status["repel"] = True
             else:
                 enemy.status["repel"] = False
@@ -43,7 +41,5 @@ class EntityMediator:
         for enemy in self.enemies:
             distance = enemy.position.distance_to(self.player.position)
 
-            if distance <= player.cognitive_restructure.radius:
+            if distance <= player.skills[1].radius:
                 enemy.status["transform"] = True
-            else:
-                enemy.status["transform"] = False

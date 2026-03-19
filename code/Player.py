@@ -23,8 +23,10 @@ class Player(Entity):
         self.score = 0
 
         # skills
-        self.breath = BreathSkill(self)
-        self.cognitive_restructure = CognitiveRestructureSkill(self)
+        self.skills = [
+            BreathSkill(self, mediator),
+            CognitiveRestructureSkill(self, mediator)
+        ]
 
         self.facing_left = False
         self.idle_image = pygame.image.load(f'./assets/player_idle.png').convert_alpha()
@@ -62,8 +64,8 @@ class Player(Entity):
         window.blit(self.image, self.rect)
 
         # draw skills
-        self.breath.draw(window)
-        self.cognitive_restructure.draw(window)
+        for skill in self.skills:
+            skill.draw(window)
 
     def update(self):
         pressed_key = pygame.key.get_pressed()
@@ -87,12 +89,8 @@ class Player(Entity):
 
         if moving:
             self.state = 'walk'
-        elif self.breath.active:
+        elif self.skills[0].active or self.skills[1].active:
             self.state = 'skill'
-            self.mediator.push_enemies(self)
-        elif self.cognitive_restructure.active:
-            self.state = 'skill'
-            self.mediator.transform_to_neutral(self)
         else:
             self.state = 'idle'
 
@@ -124,5 +122,5 @@ class Player(Entity):
         # sincroniza posição
         self.position = pygame.Vector2(self.rect.center)
 
-        self.breath.update()
-        self.cognitive_restructure.update()
+        for skill in self.skills:
+            skill.update()

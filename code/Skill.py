@@ -1,8 +1,9 @@
 import pygame
 
 class Skill:
-    def __init__(self, player):
+    def __init__(self, player, mediator):
         self.player = player
+        self.mediator = mediator
         self.active = False
 
         self.start_time = 0
@@ -25,8 +26,6 @@ class Skill:
         self.active = True
         self.start_time = pygame.time.get_ticks()
 
-        # self.player.stamina -= self.player.stamina_drain
-
     def update(self):
         if not self.active:
             return
@@ -37,15 +36,13 @@ class Skill:
             self.active = False
             self.end_time = now
 
-        # if self.active:
-        #     if self.player.stamina <= 0:
-        #         self.active = False
-        #         self.player.stamina = 0
-        # else:
-        #     self.player.stamina += self.player.stamina_regen
-        #     if self.player.stamina > self.player.max_stamina:
-        #         self.player.stamina = self.player.max_stamina
+    def get_cooldown_progress(self):
+        now = pygame.time.get_ticks()
+        elapsed = now - self.end_time
+
+        if self.cooldown == 0:
+            return 1
+        return min(1, elapsed / self.cooldown)
 
     def draw(self, window):
         pass
-

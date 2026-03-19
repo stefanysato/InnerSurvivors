@@ -1,5 +1,4 @@
 import math
-
 import pygame.draw
 
 from code.Entity import Entity
