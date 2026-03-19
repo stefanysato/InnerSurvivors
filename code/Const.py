@@ -11,10 +11,9 @@ EVENT_ENEMY = USEREVENT + 1
 EVENT_TIMEOUT = USEREVENT + 2
 
 ENTITY_SPEED = {
-    'player': 1,
-    'anxiety': 1,
+    'player': 1.5,
+    'anxiety': 1.2,
     'procrastination': 0.8,
-    'guilt': 1.2,
     'thought': 0
 }
 

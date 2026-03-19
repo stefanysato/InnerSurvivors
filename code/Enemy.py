@@ -110,8 +110,5 @@ class Enemy(Entity):
         if self.rect.colliderect(player.rect):
             if self.name == 'anxiety':
                 player.stability -= 0.1
-            if self.name == 'procrastination' and not self.effect_applied:
-                player.speed = max(0.2, player.speed - 0.05)
-                self.effect_applied = True
 
         self.rect.center = self.position

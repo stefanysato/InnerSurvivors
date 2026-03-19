@@ -11,16 +11,16 @@ class Player(Entity):
         self.type = 'player'
         self.x = x
         self.y = y
-        self.position = self.x, self.y
+        self.position = pygame.Vector2(self.x, self.y)
 
         self.stability = 100
-        # self.stamina = 100
-        # self.max_stamina = 100
-        # self.stamina_drain = 0.5
-        # self.stamina_regen = 0.01
-
-        self.speed = ENTITY_SPEED[self.name]
+        self.thoughts_collected = 0
         self.score = 0
+
+        self.base_speed = ENTITY_SPEED[self.name]
+        self.current_speed = self.base_speed
+        self.slow_factor = 1.0
+        self.is_slowed = False
 
         # skills
         self.skills = [
@@ -51,10 +51,10 @@ class Player(Entity):
 
         self.state = 'idle'
         self.frame_index = 0
-        self.animation_speed = 0.05
+        self.animation_speed = 0.08
 
         self.image = self.idle_image
-        self.rect = self.image.get_rect(center=(self.x, self.y))
+        self.rect = self.image.get_rect(center=self.position)
 
 
     def draw(self, window):
@@ -67,25 +67,38 @@ class Player(Entity):
         for skill in self.skills:
             skill.draw(window)
 
+    def collect_thought(self, thought):
+        self.thoughts_collected += 1
+        self.stability += thought.value
+
+
     def update(self):
         pressed_key = pygame.key.get_pressed()
 
         moving = False
+        direction = pygame.Vector2(0,0)
 
         if pressed_key[pygame.K_w]:
-            self.position.y -= self.speed
+            self.position.y -= self.current_speed
             moving = True
         if pressed_key[pygame.K_a]:
-            self.position.x -= self.speed
+            self.position.x -= self.current_speed
             moving = True
             self.facing_left = True
         if pressed_key[pygame.K_s]:
-            self.position.y += self.speed
+            self.position.y += self.current_speed
             moving = True
         if pressed_key[pygame.K_d]:
-            self.position.x += self.speed
+            self.position.x += self.current_speed
             moving = True
             self.facing_left = False
+
+        if self.is_slowed:
+            self.current_speed = self.base_speed * 0.5
+        else:
+            self.current_speed = self.base_speed
+
+        self.position += direction * self.current_speed
 
         if moving:
             self.state = 'walk'
@@ -109,14 +122,13 @@ class Player(Entity):
                 self.frame_index = 0
 
             self.image = self.skill_frames[int(self.frame_index)]
-
         else:
             self.image = self.idle_image
             self.frame_index = 0
 
-        self.rect.center = self.position
+        self.rect.center = (round(self.position.x), round(self.position.y))
 
-        window_rect = pygame.Rect(0,0, WIN_WIDTH, WIN_HEIGHT)
+        window_rect = pygame.Rect(0, 0, WIN_WIDTH, WIN_HEIGHT)
         self.rect.clamp_ip(window_rect)
 
         # sincroniza posição

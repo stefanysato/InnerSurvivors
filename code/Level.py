@@ -16,11 +16,11 @@ class Level:
         self.factory = EntityFactory(self.mediator)
 
         self.player = self.factory.create_player('player', WIN_WIDTH/2, WIN_HEIGHT/2)
+        self.neutral_thoughts = self.mediator.thoughts
+
 
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
         pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP)
-
-        self.neutral_thoughts = 0
 
         self.hud = HUD(self.player, window)
 
@@ -52,10 +52,22 @@ class Level:
                 entity.update()
                 entity.draw(self.window)
 
-            self.neutral_thoughts = len(self.mediator.thoughts)
+            for thought in self.neutral_thoughts:
+                if self.player.rect.colliderect(thought.rect):
+                    thought.collected = True
+                    thought.collect_time = pygame.time.get_ticks()
+                    self.player.collect_thought(thought)
+                    self.neutral_thoughts.remove(thought)
+
+            self.player.is_slowed = False
+
+            for enemy in self.mediator.enemies:
+                if enemy.rect.colliderect(self.player.rect):
+                    if enemy.name == 'procrastination':
+                        self.player.is_slowed = True
 
             self.text_generator(14, f'Tempo decorrido: {time_counter / 1000:.0f}', C_PLAYER, (WIN_WIDTH - 200, 10))
-            self.text_generator(14, f'Pensamentos Neutros: {self.neutral_thoughts}', C_PLAYER, (WIN_WIDTH - 200, 30))
+            self.text_generator(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_PLAYER, (WIN_WIDTH - 200, 30))
 
             self.hud.draw(self.window)
             pygame.display.flip()

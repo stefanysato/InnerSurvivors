@@ -39,7 +39,7 @@ class HUD:
                 window.blit(overlay, (x, y))
 
         self.text(14, f'Estabilidade: {self.player.stability:.0f}', (0, 0, 0), (10, 10))
-        self.text(14, f'Velocidade: {self.player.speed}', (0, 0, 0), (10, 30))
+        self.text(14, f'Velocidade: {self.player.current_speed}', (0, 0, 0), (10, 30))
 
 
     def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
