@@ -1,8 +1,8 @@
 import sys
+
 import pygame
 
-from code.Const import WIN_WIDTH, WIN_HEIGHT, C_WHITE
-from code.Level import Level
+from code.Const import WIN_WIDTH, WIN_HEIGHT, C_WHITE, MENU_OPTION, C_BREATH
 
 
 class Menu:
@@ -10,21 +10,34 @@ class Menu:
         self.window = window
 
     def run(self):
-        self.text_generator(30, "press [enter] to start", C_WHITE, (WIN_WIDTH/2, WIN_HEIGHT/2))
+        pygame.mixer.music.load('./assets/menu.wav')
+        pygame.mixer.music.play(-1)
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
-                    level = Level(self.window)
-                    level.run()
+        menu_option = 0
+        while True:
+            for i in range(len(MENU_OPTION)):
+                if i == menu_option:
+                    self.text(40, MENU_OPTION[i], C_BREATH, (50, WIN_HEIGHT - 200 + 50 * i))
+                else:
+                    self.text(40, MENU_OPTION[i], C_WHITE, (50, WIN_HEIGHT - 200 + 50 * i))
 
-        pygame.display.flip()
 
-    def text_generator(self, text_size: int, text: str, text_color: tuple, text_center_pos: tuple):
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_DOWN:
+                        menu_option = (menu_option + 1) % len(MENU_OPTION) # loop circular com módulo
+                    if event.key == pygame.K_UP:
+                        menu_option = (menu_option - 1) % len(MENU_OPTION)
+                    if event.key == pygame.K_RETURN:
+                        return MENU_OPTION[menu_option]
+
+            pygame.display.flip()
+
+    def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
         text_font = pygame.font.SysFont(name="Lucida Console", size=text_size)
         text_surf = text_font.render(text, True, text_color).convert_alpha()
-        text_rect = text_surf.get_rect(center=text_center_pos)
+        text_rect = text_surf.get_rect(topleft=text_pos)
         self.window.blit(source=text_surf, dest=text_rect)

@@ -13,7 +13,8 @@ class Player(Entity):
         self.y = y
         self.position = pygame.Vector2(self.x, self.y)
 
-        self.stability = 100
+        self.max_stability = 100
+        self.stability = self.max_stability
         self.thoughts_collected = 0
         self.score = 0
 
@@ -70,7 +71,8 @@ class Player(Entity):
     def collect_thought(self, thought):
         self.thoughts_collected += 1
         self.stability += thought.value
-
+        if self.stability > self.max_stability:
+            self.stability = self.max_stability
 
     def update(self):
         pressed_key = pygame.key.get_pressed()

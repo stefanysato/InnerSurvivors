@@ -15,7 +15,6 @@ class Enemy(Entity):
         self.y = y
         self.type = 'enemy'
 
-        self.effect_applied = False
         self.status = {
             "repel": False,
             "transform": False

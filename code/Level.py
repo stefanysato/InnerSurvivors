@@ -2,8 +2,8 @@ import random as rd
 import sys
 import pygame
 
-from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, C_PLAYER, EVENT_TIMEOUT, TIMEOUT_STEP, \
-    TIMEOUT_LEVEL
+from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, C_PLAYER, TIME_STEP, \
+    TIME_VICTORY, EVENT_TIME, C_BG, SPAWN_INTERVAL
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
 from code.HUD import HUD
@@ -18,19 +18,20 @@ class Level:
         self.player = self.factory.create_player('player', WIN_WIDTH/2, WIN_HEIGHT/2)
         self.neutral_thoughts = self.mediator.thoughts
 
-
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
-        pygame.time.set_timer(EVENT_TIMEOUT, TIMEOUT_STEP)
+        self.spawn_time = SPAWN_TIME
+        self.last_difficulty_increase = pygame.time.get_ticks()
 
         self.hud = HUD(self.player, window)
 
     def run(self):
-        clock = pygame.time.Clock()
+        pygame.mixer.music.stop()
         while True:
+            self.window.fill(C_BG)
+            clock = pygame.time.Clock()
             clock.tick(60)
-            time_counter = pygame.time.get_ticks()
 
-            self.window.fill('gray')
+            time_counter = pygame.time.get_ticks()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -45,8 +46,12 @@ class Level:
                     if event.key == pygame.K_c:
                         self.mediator.player.skills[1].activate()
 
-            if time_counter >= TIMEOUT_LEVEL:
-                print('você venceu!')
+            if time_counter - self.last_difficulty_increase >= SPAWN_INTERVAL:
+                self.last_difficulty_increase = time_counter
+                self.spawn_time = max(500, int(self.spawn_time * 0.9))
+                pygame.time.set_timer(EVENT_ENEMY, self.spawn_time)
+            if time_counter >= TIME_VICTORY:
+                pass
 
             for entity in self.mediator.entities:
                 entity.update()
@@ -66,8 +71,8 @@ class Level:
                     if enemy.name == 'procrastination':
                         self.player.is_slowed = True
 
-            self.text_generator(14, f'Tempo decorrido: {time_counter / 1000:.0f}', C_PLAYER, (WIN_WIDTH - 200, 10))
-            self.text_generator(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_PLAYER, (WIN_WIDTH - 200, 30))
+            self.text(14, f'Tempo decorrido: {time_counter / 1000:.0f}s', C_PLAYER, (WIN_WIDTH - 200, 10))
+            self.text(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_PLAYER, (WIN_WIDTH - 200, 30))
 
             self.hud.draw(self.window)
             pygame.display.flip()
@@ -89,7 +94,7 @@ class Level:
             y = rd.randint(0, WIN_HEIGHT)
         return x,y
 
-    def text_generator(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
+    def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
         text_font = pygame.font.SysFont(name="Verdana", size=text_size)
         text_surf = text_font.render(text, True, text_color).convert_alpha()
         text_rect = text_surf.get_rect(left=text_pos[0], top=text_pos[1])
