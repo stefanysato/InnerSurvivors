@@ -54,6 +54,8 @@ class Level:
                         self.mediator.player.skills[0].activate()
                     if event.key == pygame.K_LSHIFT:
                         self.mediator.player.skills[1].activate()
+                    if event.key == pygame.K_ESCAPE:
+                        return
 
             if now - self.last_difficulty_increase >= SPAWN_INTERVAL:
                 self.last_difficulty_increase = now
@@ -67,7 +69,7 @@ class Level:
 
             if self.player.is_dead:
                 score = self.calculate_score()
-                return score, self.victory_achieved
+                return score, self.victory_achieved, elapsed
 
 
             for entity in self.mediator.entities:
@@ -88,8 +90,8 @@ class Level:
                     if enemy.name == 'procrastination':
                         self.player.is_slowed = True
 
-            self.text(14, f'Tempo decorrido: {elapsed / 1000:.0f}s', C_WHITE, (WIN_WIDTH - 200, 10))
-            self.text(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_WHITE, (WIN_WIDTH - 200, 30))
+            self.text(14, f'Tempo decorrido: {(elapsed/1000):.0f}s', C_WHITE, (WIN_WIDTH - 10, 10))
+            self.text(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_WHITE, (WIN_WIDTH - 10, 30))
 
             self.hud.draw(self.window)
             pygame.display.flip()
@@ -131,5 +133,5 @@ class Level:
     def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
         text_font = pygame.font.SysFont(name="Verdana", size=text_size)
         text_surf = text_font.render(text, True, text_color).convert_alpha()
-        text_rect = text_surf.get_rect(left=text_pos[0], top=text_pos[1])
+        text_rect = text_surf.get_rect(topright=text_pos)
         self.window.blit(source=text_surf, dest=text_rect)

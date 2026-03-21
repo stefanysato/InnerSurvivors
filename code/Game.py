@@ -21,8 +21,8 @@ class Game:
                 level = Level(self.window)
                 result = level.run()
                 if result is not None:
-                    final_score, victory = result
-                    score.save(final_score, victory = victory)
+                    final_score, victory, elapsed = result
+                    score.save(final_score, victory = victory, elapsed_time=elapsed)
 
             elif menu_return == MENU_OPTION[1]:
                 score.show()

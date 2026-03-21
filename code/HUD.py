@@ -1,5 +1,5 @@
 import pygame
-from code.Const import WIN_HEIGHT, C_WHITE
+from code.Const import WIN_HEIGHT, C_WHITE, ENTITY_SPEED
 
 
 class HUD:
@@ -16,6 +16,12 @@ class HUD:
             (40, WIN_HEIGHT - 80),
             (100, WIN_HEIGHT - 80)
         ]
+
+    def verify_speed_status(self):
+        if self.player.is_slowed:
+            return 'Lentidão'
+        else:
+            return 'Normal'
 
     def draw(self, window):
         for i, skill in enumerate(self.player.skills):
@@ -39,8 +45,9 @@ class HUD:
 
                 window.blit(overlay, (x, y))
 
+        speed_status = self.verify_speed_status()
         self.text(14, f'Estabilidade: {self.player.stability:.0f}', C_WHITE, (10, 10))
-        self.text(14, f'Velocidade: {self.player.current_speed}', C_WHITE, (10, 30))
+        self.text(14, f'Velocidade: {speed_status}', C_WHITE, (10, 30))
 
 
     def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):

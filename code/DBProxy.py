@@ -10,11 +10,12 @@ class DBProxy:
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             name TEXT NOT NULL,
                             score INTEGER NOT NULL,
+                            time TEXT NOT NULL,
                             date TEXT NOT NULL)
                         ''')
 
     def save(self, score):
-        self.conn.execute('INSERT INTO data (name, score, date) VALUES (:name,:score,:date)', score)
+        self.conn.execute('INSERT INTO data (name, score, time, date) VALUES (:name,:score,:time,:date)', score)
         self.conn.commit()
 
     def show_results(self) -> list:

@@ -1,4 +1,5 @@
 import datetime
+import time
 
 import pygame
 from pygame import Surface, Rect
@@ -18,7 +19,7 @@ class Score:
         self.selected = True
 
 
-    def save(self, score, victory):
+    def save(self, score, victory, elapsed_time):
         input_rect = pygame.Rect((WIN_WIDTH / 2 - 100, 220), (200,30))
         color = C_BLUE_GREY
 
@@ -42,7 +43,7 @@ class Score:
                         return
                     if self.selected:
                         if event.key == pygame.K_RETURN:
-                            db_proxy.save({'name':self.name, 'score':score, 'date': get_formatted_date()})
+                            db_proxy.save({'name':self.name, 'score':score, 'time':get_formatted_time(elapsed_time),'date': get_formatted_date()})
                             self.show()
                             return
                         elif event.key == pygame.K_BACKSPACE:
@@ -79,15 +80,18 @@ class Score:
         self.surf.fill(C_BG)
         self.window.blit(self.surf, (0, 0))
 
-        self.text(30, 'PONTUAÇÃO [ TOP 10 ]', C_BLACK, (WIN_WIDTH / 2, 40))
-        self.text(20, f'Nome     Score          Data        ', C_BLACK, (WIN_WIDTH / 2, 90))
+        title_rect = pygame.Rect((0,20), (WIN_WIDTH, 50))
+        pygame.draw.rect(self.window, C_BLUE_GREY, title_rect)
+
+        self.text(30, 'SCORE | TOP 10', C_BLACK, (250, 30), anchor='topleft')
+        self.text(20, f'Nome       Score       Tempo total     Data', C_BLUE_GREY, (60, 90), anchor='topleft')
         db_proxy = DBProxy('DBScore')
         list_score = db_proxy.show_results()
         db_proxy.close()
 
         for player_score in list_score:
-            id_, name, score, date = player_score
-            self.text(20, f'     {name}        {score}        {date}   ', C_WHITE, SCORE_POS[list_score.index(player_score)])
+            id_, name, score, elapsed_time, date = player_score
+            self.text(20, f'{name}        {score}         {elapsed_time}          {date}', C_WHITE, SCORE_POS[list_score.index(player_score)], anchor='topleft')
 
         while True:
             for event in pygame.event.get():
@@ -100,13 +104,20 @@ class Score:
 
             pygame.display.flip()
 
-    def text(self, text_size: int, text: str, text_color: tuple, text_center_pos: tuple, dest_rect = None):
+    def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple, dest_rect = None, anchor: str = 'center'):
         text_font: Font = pygame.font.SysFont(name="Lucida Console", size=text_size)
         text_surf: Surface = text_font.render(text, True, text_color).convert_alpha()
-        text_rect: Rect = text_surf.get_rect(center=text_center_pos)
+        text_rect: Rect = text_surf.get_rect()
+        setattr(text_rect, anchor, text_pos)
         if dest_rect is None:
             dest_rect = text_rect
         self.window.blit(source=text_surf, dest=dest_rect)
+
+def get_formatted_time(elapsed_time):
+    elapsed_seconds = elapsed_time // 1000
+    mins = elapsed_seconds // 60
+    secs = elapsed_seconds % 60
+    return f"{mins:02}m{secs:02}s"
 
 def get_formatted_date():
     current_datetime = datetime.datetime.now()

@@ -33,7 +33,7 @@ SPAWN_INTERVAL = 60000  # 1min
 # T
 TIME_STEP = 100  # 100ms
 # TIME_VICTORY = 300000 # 5min
-TIME_VICTORY = 60000  # 1min - TESTE
+TIME_VICTORY = 60000 # 1min - TESTE
 
 # W
 WIN_WIDTH = 800
@@ -42,14 +42,14 @@ WIN_HEIGHT = 600
 WIN_CENTER = WIN_WIDTH / 2, WIN_HEIGHT / 2
 
 SCORE_POS = {
-    0: (WIN_WIDTH / 2, 130),
-    1: (WIN_WIDTH / 2, 150),
-    2: (WIN_WIDTH / 2, 170),
-    3: (WIN_WIDTH / 2, 190),
-    4: (WIN_WIDTH / 2, 210),
-    5: (WIN_WIDTH / 2, 230),
-    6: (WIN_WIDTH / 2, 250),
-    7: (WIN_WIDTH / 2, 270),
-    8: (WIN_WIDTH / 2, 290),
-    9: (WIN_WIDTH / 2, 310),
+    0: (60, 130),
+    1: (60, 150),
+    2: (60, 170),
+    3: (60, 190),
+    4: (60, 210),
+    5: (60, 230),
+    6: (60, 250),
+    7: (60, 270),
+    8: (60, 290),
+    9: (60, 310),
 }
