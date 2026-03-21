@@ -1,9 +1,10 @@
 import random as rd
 import sys
+
 import pygame
 
-from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, C_PLAYER, TIME_STEP, \
-    TIME_VICTORY, EVENT_TIME, C_BG, SPAWN_INTERVAL
+from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, TIME_VICTORY, C_BG, SPAWN_INTERVAL, \
+    C_WHITE
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
 from code.HUD import HUD
@@ -12,15 +13,22 @@ from code.HUD import HUD
 class Level:
     def __init__(self, window):
         self.window = window
-        self.mediator =  EntityMediator()
+        self.mediator = EntityMediator()
         self.factory = EntityFactory(self.mediator)
 
-        self.player = self.factory.create_player('player', WIN_WIDTH/2, WIN_HEIGHT/2)
+        self.player = self.factory.create_player('player', WIN_WIDTH / 2, WIN_HEIGHT / 2)
+        self.player.score = 0
+
         self.neutral_thoughts = self.mediator.thoughts
 
         pygame.time.set_timer(EVENT_ENEMY, SPAWN_TIME)
         self.spawn_time = SPAWN_TIME
         self.last_difficulty_increase = pygame.time.get_ticks()
+
+        self.start_time = pygame.time.get_ticks()
+
+        self.victory_achieved = False
+        self.victory_time_reached = 0
 
         self.hud = HUD(self.player, window)
 
@@ -31,7 +39,8 @@ class Level:
             clock = pygame.time.Clock()
             clock.tick(60)
 
-            time_counter = pygame.time.get_ticks()
+            now = pygame.time.get_ticks()
+            elapsed = now - self.start_time
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -43,15 +52,23 @@ class Level:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         self.mediator.player.skills[0].activate()
-                    if event.key == pygame.K_c:
+                    if event.key == pygame.K_LSHIFT:
                         self.mediator.player.skills[1].activate()
 
-            if time_counter - self.last_difficulty_increase >= SPAWN_INTERVAL:
-                self.last_difficulty_increase = time_counter
+            if now - self.last_difficulty_increase >= SPAWN_INTERVAL:
+                self.last_difficulty_increase = now
                 self.spawn_time = max(500, int(self.spawn_time * 0.9))
                 pygame.time.set_timer(EVENT_ENEMY, self.spawn_time)
-            if time_counter >= TIME_VICTORY:
-                pass
+                print(self.spawn_time)
+
+            # se passar do tempo, considera vitória
+            if not self.victory_achieved and elapsed > TIME_VICTORY:
+                self.victory_achieved = True
+
+            if self.player.is_dead:
+                score = self.calculate_score()
+                return score, self.victory_achieved
+
 
             for entity in self.mediator.entities:
                 entity.update()
@@ -71,11 +88,28 @@ class Level:
                     if enemy.name == 'procrastination':
                         self.player.is_slowed = True
 
-            self.text(14, f'Tempo decorrido: {time_counter / 1000:.0f}s', C_PLAYER, (WIN_WIDTH - 200, 10))
-            self.text(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_PLAYER, (WIN_WIDTH - 200, 30))
+            self.text(14, f'Tempo decorrido: {elapsed / 1000:.0f}s', C_WHITE, (WIN_WIDTH - 200, 10))
+            self.text(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_WHITE, (WIN_WIDTH - 200, 30))
 
             self.hud.draw(self.window)
             pygame.display.flip()
+
+    def calculate_score(self):
+        total_time = pygame.time.get_ticks() - self.start_time
+        time_seconds = total_time // 1000
+
+        bonus = 0
+        if self.victory_achieved:
+            extra_time = (total_time - TIME_VICTORY) // 1000
+            bonus = max(0, extra_time * 2)
+
+        score = (
+                self.player.thoughts_collected * 10
+                + time_seconds
+                + bonus
+        )
+
+        return score
 
     @staticmethod
     def spawn_enemy():
@@ -92,7 +126,7 @@ class Level:
         elif side == 'right':
             x = WIN_WIDTH + 50
             y = rd.randint(0, WIN_HEIGHT)
-        return x,y
+        return x, y
 
     def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
         text_font = pygame.font.SysFont(name="Verdana", size=text_size)

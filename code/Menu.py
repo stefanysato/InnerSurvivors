@@ -1,13 +1,14 @@
 import sys
 
 import pygame
-
-from code.Const import WIN_WIDTH, WIN_HEIGHT, C_WHITE, MENU_OPTION, C_BREATH
+from code.Const import WIN_HEIGHT, C_WHITE, MENU_OPTION, C_BREATH, C_BG
 
 
 class Menu:
     def __init__(self, window):
         self.window = window
+        self.surf = pygame.image.load('./assets/menu_bg.png').convert_alpha()
+        self.rect = self.surf.get_rect()
 
     def run(self):
         pygame.mixer.music.load('./assets/menu.wav')
@@ -15,11 +16,15 @@ class Menu:
 
         menu_option = 0
         while True:
+            self.window.blit(self.surf, self.rect)
             for i in range(len(MENU_OPTION)):
                 if i == menu_option:
                     self.text(40, MENU_OPTION[i], C_BREATH, (50, WIN_HEIGHT - 200 + 50 * i))
                 else:
                     self.text(40, MENU_OPTION[i], C_WHITE, (50, WIN_HEIGHT - 200 + 50 * i))
+
+            self.text(60, 'Inner', C_BREATH, text_pos=(50, 50))
+            self.text(60, 'Survivors', C_BREATH, text_pos=(50, 100))
 
 
             for event in pygame.event.get():

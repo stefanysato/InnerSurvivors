@@ -16,12 +16,12 @@ class Player(Entity):
         self.max_stability = 100
         self.stability = self.max_stability
         self.thoughts_collected = 0
-        self.score = 0
 
         self.base_speed = ENTITY_SPEED[self.name]
         self.current_speed = self.base_speed
         self.slow_factor = 1.0
         self.is_slowed = False
+        self.is_dead = False
 
         # skills
         self.skills = [
@@ -128,6 +128,9 @@ class Player(Entity):
             self.image = self.idle_image
             self.frame_index = 0
 
+        if self.stability <= 0:
+            self.is_dead = True
+
         self.rect.center = (round(self.position.x), round(self.position.y))
 
         window_rect = pygame.Rect(0, 0, WIN_WIDTH, WIN_HEIGHT)
@@ -138,3 +141,4 @@ class Player(Entity):
 
         for skill in self.skills:
             skill.update()
+
