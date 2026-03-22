@@ -1,15 +1,14 @@
 import pygame
 
-from code.Const import C_BREATH, WIN_WIDTH
+from code.Const import C_COGNIT
 from code.Skill import Skill
 
-
-class BreathSkill(Skill):
+class CognitiveRestructure(Skill):
     def __init__(self, player, mediator):
         Skill.__init__(self, player, mediator)
         self.radius = 60
-        self.duration = 3000  # 3s
-        self.cooldown = 15000  # 10s
+        self.duration = 2000 # 2s
+        self.cooldown = 20000 # 15s
         self.end_time = -self.cooldown
 
     def update(self):
@@ -18,10 +17,11 @@ class BreathSkill(Skill):
         if not self.active:
             return
 
-        self.mediator.push_enemies(self.player)
+        self.mediator.transform_to_neutral(self.player)
 
     def draw(self, window):
         if not self.active:
             return
 
-        pygame.draw.circle(window, C_BREATH, self.player.rect.center, self.radius, 3)
+        pygame.draw.circle(window, C_COGNIT, self.player.rect.center, self.radius, 3)
+

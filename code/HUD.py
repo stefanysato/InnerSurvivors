@@ -1,5 +1,5 @@
 import pygame
-from code.Const import WIN_HEIGHT, C_WHITE, ENTITY_SPEED
+from code.Const import WIN_HEIGHT, C_WHITE, ENTITY_SPEED, WIN_WIDTH
 
 
 class HUD:
@@ -19,7 +19,7 @@ class HUD:
 
     def verify_speed_status(self):
         if self.player.is_slowed:
-            return 'Lentidão'
+            return 'Lento'
         else:
             return 'Normal'
 
@@ -48,10 +48,11 @@ class HUD:
         speed_status = self.verify_speed_status()
         self.text(14, f'Estabilidade: {self.player.stability:.0f}', C_WHITE, (10, 10))
         self.text(14, f'Velocidade: {speed_status}', C_WHITE, (10, 30))
+        self.text(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_WHITE, (WIN_WIDTH - 10, 30), anchor='topright')
 
-
-    def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
-        text_font = pygame.font.SysFont(name="Verdana", size=text_size)
+    def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple,  anchor: str = 'topleft'):
+        text_font = pygame.font.Font('./assets/fonts/Roboto.ttf', size=text_size)
         text_surf = text_font.render(text, True, text_color).convert_alpha()
-        text_rect = text_surf.get_rect(left=text_pos[0], top=text_pos[1])
+        text_rect = text_surf.get_rect()
+        setattr(text_rect, anchor, text_pos)
         self.window.blit(source=text_surf, dest=text_rect)

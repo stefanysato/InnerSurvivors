@@ -23,33 +23,18 @@ ENTITY_SPEED = {
 }
 
 # M
-MENU_OPTION = ('JOGAR', 'SCORE', 'SAIR')
+MENU_OPTION = ('INICIAR', 'COMO JOGAR', 'SCORE', 'SAIR')
 
 # S
 SPAWN_TIME = 3000
 SPAWN_INTERVAL = 60000  # 1min
 
-
 # T
 TIME_STEP = 100  # 100ms
-# TIME_VICTORY = 300000 # 5min
-TIME_VICTORY = 60000 # 1min - TESTE
+TIME_VICTORY = 300000 # 5min
 
 # W
 WIN_WIDTH = 800
 WIN_HEIGHT = 600
 
 WIN_CENTER = WIN_WIDTH / 2, WIN_HEIGHT / 2
-
-SCORE_POS = {
-    0: (60, 130),
-    1: (60, 150),
-    2: (60, 170),
-    3: (60, 190),
-    4: (60, 210),
-    5: (60, 230),
-    6: (60, 250),
-    7: (60, 270),
-    8: (60, 290),
-    9: (60, 310),
-}

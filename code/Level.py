@@ -1,6 +1,5 @@
 import random as rd
 import sys
-
 import pygame
 
 from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, TIME_VICTORY, C_BG, SPAWN_INTERVAL, \
@@ -8,7 +7,6 @@ from code.Const import WIN_HEIGHT, WIN_WIDTH, EVENT_ENEMY, SPAWN_TIME, TIME_VICT
 from code.EntityFactory import EntityFactory
 from code.EntityMediator import EntityMediator
 from code.HUD import HUD
-
 
 class Level:
     def __init__(self, window):
@@ -33,7 +31,8 @@ class Level:
         self.hud = HUD(self.player, window)
 
     def run(self):
-        pygame.mixer.music.stop()
+        pygame.mixer.music.load('./assets/sounds/level.ogg')
+        pygame.mixer.music.play(-1)
         while True:
             self.window.fill(C_BG)
             clock = pygame.time.Clock()
@@ -61,7 +60,6 @@ class Level:
                 self.last_difficulty_increase = now
                 self.spawn_time = max(500, int(self.spawn_time * 0.9))
                 pygame.time.set_timer(EVENT_ENEMY, self.spawn_time)
-                print(self.spawn_time)
 
             # se passar do tempo, considera vitória
             if not self.victory_achieved and elapsed > TIME_VICTORY:
@@ -91,7 +89,6 @@ class Level:
                         self.player.is_slowed = True
 
             self.text(14, f'Tempo decorrido: {(elapsed/1000):.0f}s', C_WHITE, (WIN_WIDTH - 10, 10))
-            self.text(14, f'Pensamentos Neutros: {self.player.thoughts_collected}', C_WHITE, (WIN_WIDTH - 10, 30))
 
             self.hud.draw(self.window)
             pygame.display.flip()
@@ -131,7 +128,7 @@ class Level:
         return x, y
 
     def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple):
-        text_font = pygame.font.SysFont(name="Verdana", size=text_size)
+        text_font = pygame.font.Font('./assets/fonts/Roboto.ttf', size=text_size)
         text_surf = text_font.render(text, True, text_color).convert_alpha()
         text_rect = text_surf.get_rect(topright=text_pos)
         self.window.blit(source=text_surf, dest=text_rect)

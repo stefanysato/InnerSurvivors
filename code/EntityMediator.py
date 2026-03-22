@@ -1,3 +1,5 @@
+import pygame.mixer
+
 
 class EntityMediator:
     def __init__(self):

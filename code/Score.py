@@ -1,12 +1,9 @@
 import datetime
-import time
-
 import pygame
 from pygame import Surface, Rect
 from pygame.font import Font
 
-from code.Const import C_BG, WIN_WIDTH, WIN_HEIGHT, C_BG_WIN, C_BG_LOSE, C_BLACK, C_BLUE_GREY, C_WHITE, \
-    SCORE_POS
+from code.Const import C_BG, WIN_WIDTH, WIN_HEIGHT, C_BG_WIN, C_BG_LOSE, C_BLACK, C_BLUE_GREY, C_WHITE
 from code.DBProxy import DBProxy
 
 
@@ -15,7 +12,7 @@ class Score:
         self.window = window
         self.surf = pygame.Surface((WIN_WIDTH, WIN_HEIGHT))
         self.name = ''
-        self.max_chars = 5
+        self.max_chars = 8
         self.selected = True
 
 
@@ -62,7 +59,7 @@ class Score:
                 self.text(20, 'Digite seu nome:', C_BG, (WIN_WIDTH / 2, 200))
                 # type name - input
                 pygame.draw.rect(self.window, color, input_rect, 3)
-                self.text(20, self.name, C_BLACK, (WIN_WIDTH / 2, 230), dest_rect=(input_rect.x + 5, input_rect.y + 5))
+                self.text(20, self.name, C_BLACK, (0,0), dest_rect=(input_rect.x + 5, input_rect.y + 3))
                 self.text(20, '[enter]', color, (WIN_WIDTH / 2, 270))
 
             if self.selected:
@@ -80,18 +77,43 @@ class Score:
         self.surf.fill(C_BG)
         self.window.blit(self.surf, (0, 0))
 
-        title_rect = pygame.Rect((0,20), (WIN_WIDTH, 50))
-        pygame.draw.rect(self.window, C_BLUE_GREY, title_rect)
+        border_rect = pygame.Rect((20,20), (WIN_WIDTH-40, WIN_HEIGHT-40))
+        pygame.draw.rect(self.window, C_BLUE_GREY, border_rect, 2)
 
-        self.text(30, 'SCORE | TOP 10', C_BLACK, (250, 30), anchor='topleft')
-        self.text(20, f'Nome       Score       Tempo total     Data', C_BLUE_GREY, (60, 90), anchor='topleft')
+        bg_surf = pygame.image.load('./assets/breath_bg.png').convert_alpha()
+        bg_rect = bg_surf.get_rect(bottomright = (WIN_WIDTH-30, WIN_HEIGHT - 30))
+        self.window.blit(bg_surf, bg_rect)
+
+        # posição colunas
+        col_name = 60
+        col_score = 280
+        col_time = 360
+        col_date = 500
+        y = 120
+        line_height = 30
+
+        # titulo
+        self.text(30, 'SCORE', C_BLACK, (50, 30), anchor='topleft')
+
+        # cabeçalho
+        self.text(20, 'Nome', C_BLUE_GREY, (col_name, 90), anchor='topleft')
+        self.text(20, 'Score', C_BLUE_GREY, (col_score, 90), anchor='topright')
+        self.text(20, 'Tempo', C_BLUE_GREY, (col_time, 90), anchor='topleft')
+        self.text(20, 'Data', C_BLUE_GREY, (col_date, 90), anchor='topleft')
+
+        # retrieve db
         db_proxy = DBProxy('DBScore')
         list_score = db_proxy.show_results()
         db_proxy.close()
 
         for player_score in list_score:
             id_, name, score, elapsed_time, date = player_score
-            self.text(20, f'{name}        {score}         {elapsed_time}          {date}', C_WHITE, SCORE_POS[list_score.index(player_score)], anchor='topleft')
+            self.text(20, str(name), C_WHITE, (col_name, y), anchor="topleft")
+            self.text(20, str(score), C_WHITE, (col_score, y), anchor="topright")
+            self.text(20, str(elapsed_time), C_WHITE, (col_time, y), anchor="topleft")
+            self.text(20, str(date), C_WHITE, (col_date, y), anchor="topleft")
+
+            y += line_height
 
         while True:
             for event in pygame.event.get():
@@ -105,7 +127,7 @@ class Score:
             pygame.display.flip()
 
     def text(self, text_size: int, text: str, text_color: tuple, text_pos: tuple, dest_rect = None, anchor: str = 'center'):
-        text_font: Font = pygame.font.SysFont(name="Lucida Console", size=text_size)
+        text_font: Font = pygame.font.Font("./assets/fonts/JetBrainsMono.ttf", size=text_size)
         text_surf: Surface = text_font.render(text, True, text_color).convert_alpha()
         text_rect: Rect = text_surf.get_rect()
         setattr(text_rect, anchor, text_pos)

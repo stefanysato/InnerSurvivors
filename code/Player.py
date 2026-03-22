@@ -1,7 +1,7 @@
 import math
 import pygame.draw
-from code.BreathSkill import BreathSkill
-from code.CognitiveRestructureSkill import CognitiveRestructureSkill
+from code.BreathControl import BreathControl
+from code.CognitiveRestructure import CognitiveRestructure
 from code.Const import ENTITY_SPEED, WIN_WIDTH, WIN_HEIGHT
 from code.Entity import Entity
 
@@ -25,8 +25,8 @@ class Player(Entity):
 
         # skills
         self.skills = [
-            BreathSkill(self, mediator),
-            CognitiveRestructureSkill(self, mediator)
+            BreathControl(self, mediator),
+            CognitiveRestructure(self, mediator)
         ]
 
         self.facing_left = False
