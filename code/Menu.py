@@ -47,6 +47,8 @@ class Menu:
                       anchor="bottomright")
             self.text(14, 'Cognitiva', F_JBMONO, C_BREATH, text_pos=(WIN_WIDTH - 40, WIN_HEIGHT - 60),
                       anchor="bottomright")
+            self.text(12, '[Left Shift]', F_JBMONO, C_BREATH, text_pos=(WIN_WIDTH - 170, WIN_HEIGHT - 40),
+                      anchor="bottomright")
 
 
             for event in pygame.event.get():

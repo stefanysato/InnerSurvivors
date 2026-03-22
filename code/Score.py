@@ -1,4 +1,6 @@
 import datetime
+import sys
+
 import pygame
 from pygame import Surface, Rect
 from pygame.font import Font
@@ -119,7 +121,7 @@ class Score:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()  # close window
-                    quit()  # end pygame
+                    sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         return

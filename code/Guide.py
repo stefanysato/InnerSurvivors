@@ -1,3 +1,4 @@
+import sys
 import pygame
 
 from code.Const import WIN_HEIGHT, WIN_WIDTH, C_BG, C_BLUE_GREY, C_BLACK, F_ROBOTO, F_AMATIC, F_JBMONO
@@ -47,7 +48,7 @@ class Guide:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()  # close window
-                    quit()  # end pygame
+                    sys.exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         return
