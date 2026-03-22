@@ -22,6 +22,11 @@ ENTITY_SPEED = {
     'thought': 0
 }
 
+# F
+F_AMATIC = './assets/fonts/AmaticSC.ttf'
+F_JBMONO = './assets/fonts/JetBrainsMono.ttf'
+F_ROBOTO = './assets/fonts/Roboto.ttf'
+
 # M
 MENU_OPTION = ('INICIAR', 'COMO JOGAR', 'SCORE', 'SAIR')
 
